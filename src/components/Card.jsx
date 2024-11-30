@@ -2,7 +2,16 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 
-const Card = ({ id, media, title, location, address, rating, price }) => {
+const Card = ({
+  id,
+  media,
+  title,
+  location,
+  address,
+  rating,
+  price,
+  bookingsCount,
+}) => {
   console.log(media);
   return (
     <NavLink
@@ -34,6 +43,11 @@ const Card = ({ id, media, title, location, address, rating, price }) => {
               <span className="text-gray-600">/ night</span>
             </p>
           </div>
+          {bookingsCount !== undefined && (
+            <div className="mt-4 text-sm text-main-red font-semibold">
+              {bookingsCount} upcoming booking{bookingsCount === 1 ? "" : "s"}
+            </div>
+          )}
         </div>
       </div>
     </NavLink>

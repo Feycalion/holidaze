@@ -29,11 +29,13 @@ const ProfilePage = () => {
         setNewAvatar(profileData.data.avatar?.url || "");
 
         if (profileData.data.venueManager) {
-          const venuesData = await apiGet(`/profiles/${id}/venues`);
+          const venuesData = await apiGet(
+            `/profiles/${id}/venues?_bookings=true`
+          );
           setVenues(venuesData.data || []);
         } else {
-          const bookingsData = await apiGet(`/profiles/${id}/bookings`);
-          setBookings(bookingsData.data || []);
+          const bookingsData = await apiGet(`/profiles/${id}?_bookings=true`);
+          setBookings(bookingsData.data.bookings || []);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -133,46 +135,83 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {isOwnProfile && profile.venueManager && (
-        <button
-          onClick={() => navigate("/create")}
-          className="bg-main-red text-background py-2 px-4 rounded mb-6"
-        >
-          Create Venue
-        </button>
-      )}
-
-      {profile.venueManager && (
+      {profile.venueManager ? (
         <>
+          {isOwnProfile && (
+            <button
+              onClick={() => navigate("/create")}
+              className="bg-main-red text-background py-2 px-4 rounded mb-6"
+            >
+              Create Venue
+            </button>
+          )}
+
           <h2 className="text-xl mb-4">{profile.name}'s Venues</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
             {venues.length > 0 ? (
-              venues.map((venue) => (
-                <div key={venue.id} className="relative">
-                  <Card
-                    id={venue.id}
-                    media={
-                      venue.media[0]?.url || "https://picsum.photos/200/300"
-                    }
-                    title={venue.name}
-                    location={venue.location?.city}
-                    address={venue.location?.address}
-                    rating={venue.rating}
-                    price={venue.price}
-                  />
-                  {isOwnProfile && (
-                    <button
-                      onClick={() => navigate(`/update/${venue.id}`)}
-                      className="absolute top-2 right-2 bg-main-red text-background p-2 rounded-full shadow-lg hover:bg-red-700 transition"
-                      title="Edit Venue"
-                    >
-                      <AiOutlineEdit size={20} />
-                    </button>
-                  )}
-                </div>
-              ))
+              venues.map((venue) => {
+                const now = new Date();
+                const upcomingBookingsCount = venue.bookings?.filter(
+                  (booking) => new Date(booking.dateFrom) > now
+                ).length;
+
+                return (
+                  <div key={venue.id} className="relative">
+                    <Card
+                      id={venue.id}
+                      media={
+                        venue.media[0]?.url || "https://picsum.photos/200/300"
+                      }
+                      title={venue.name}
+                      location={venue.location?.city}
+                      address={venue.location?.address}
+                      rating={venue.rating}
+                      price={venue.price}
+                      bookingsCount={upcomingBookingsCount}
+                    />
+                    {isOwnProfile && (
+                      <button
+                        onClick={() => navigate(`/update/${venue.id}`)}
+                        className="absolute top-2 right-2 bg-main-red text-background p-2 rounded-full shadow-lg hover:bg-red-700 transition"
+                        title="Edit Venue"
+                      >
+                        <AiOutlineEdit size={20} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })
             ) : (
               <p>This user has no venues.</p>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <h2 className="text-xl mb-4">Your Bookings</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+            {bookings.length > 0 ? (
+              bookings.map((booking) => {
+                if (!booking?.venue) return null;
+
+                return (
+                  <Card
+                    key={booking.id}
+                    id={booking.venue.id}
+                    media={
+                      booking.venue.media?.[0]?.url ||
+                      "https://picsum.photos/200/300"
+                    }
+                    title={booking.venue.name}
+                    location={booking.venue.location?.city}
+                    address={booking.venue.location?.address}
+                    rating={booking.venue.rating}
+                    price={booking.venue.price}
+                  />
+                );
+              })
+            ) : (
+              <p>You have no bookings.</p>
             )}
           </div>
         </>

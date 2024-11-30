@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import Calendar from "react-calendar";
+import { apiPost, apiGet } from "../utils/apiKey";
 import {
   FaStar,
   FaWifi,
@@ -7,6 +9,7 @@ import {
   FaPaw,
   FaUtensils,
   FaUser,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 const SingleVenuePage = () => {
@@ -14,6 +17,26 @@ const SingleVenuePage = () => {
   const [venue, setVenue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedDates, setSelectedDates] = useState([null, null]);
+  const [guestCount, setGuestCount] = useState(1);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isVenueManager, setIsVenueManager] = useState(false);
+
+  const loggedInUserName = localStorage.getItem("user");
+
+  const openCalendar = () => setIsCalendarOpen(true);
+  const closeCalendar = () => setIsCalendarOpen(false);
+
+  const calculateTotalPrice = () => {
+    if (!selectedDates[0] || !selectedDates[1] || !venue?.price) return 0;
+    const nights =
+      Math.ceil(
+        (new Date(selectedDates[1]).getTime() -
+          new Date(selectedDates[0]).getTime()) /
+          (1000 * 60 * 60 * 24)
+      ) || 0;
+    return nights * venue.price;
+  };
 
   useEffect(() => {
     const fetchVenue = async () => {
@@ -35,8 +58,40 @@ const SingleVenuePage = () => {
       }
     };
 
+    const fetchUserProfile = async () => {
+      try {
+        const userProfile = await apiGet(`/profiles/${loggedInUserName}`);
+        setIsVenueManager(userProfile.data.venueManager);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
     fetchVenue();
-  }, [id]);
+    fetchUserProfile();
+  }, [id, loggedInUserName]);
+
+  const handleBooking = async () => {
+    if (!selectedDates[0] || !selectedDates[1]) {
+      alert("Please select a valid date range.");
+      return;
+    }
+
+    const payload = {
+      dateFrom: selectedDates[0].toISOString(),
+      dateTo: selectedDates[1].toISOString(),
+      guests: parseInt(guestCount, 10),
+      venueId: id,
+    };
+
+    try {
+      await apiPost(`/holidaze/bookings`, payload);
+      alert("Booking successful!");
+    } catch (error) {
+      console.error("Error booking venue:", error);
+      alert("Failed to book venue. Please try again.");
+    }
+  };
 
   if (loading) return <p>Loading venue...</p>;
   if (error || !venue)
@@ -107,10 +162,96 @@ const SingleVenuePage = () => {
                 </li>
               )}
             </ul>
+
             <hr className="my-6 border-gray-300" />
-            <button className="px-3 bg-main-red text-background py-2 rounded font-semibold hover:bg-red-800 transition">
-              Book venue
-            </button>
+
+            {!isVenueManager && (
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold text-text">
+                  Book this Venue
+                </h2>
+                <button
+                  onClick={openCalendar}
+                  className="flex items-center px-4 py-2 bg-main-red text-background rounded font-semibold hover:bg-red-800 transition mt-4"
+                >
+                  <FaCalendarAlt className="mr-2" />
+                  {selectedDates[0] && selectedDates[1]
+                    ? `${selectedDates[0].toLocaleDateString()} - ${selectedDates[1].toLocaleDateString()}`
+                    : "No date selected"}
+                </button>
+
+                {isCalendarOpen && (
+                  <div className="mt-4 bg-white p-4 rounded shadow-lg">
+                    <Calendar
+                      selectRange
+                      onChange={(dates) => {
+                        console.log("Selected Dates:", dates);
+                        setSelectedDates(dates);
+                      }}
+                      value={selectedDates}
+                      tileClassName={({ date }) => {
+                        if (
+                          selectedDates[0] &&
+                          selectedDates[1] &&
+                          date >= new Date(selectedDates[0]) &&
+                          date <= new Date(selectedDates[1])
+                        ) {
+                          return "highlighted-date";
+                        }
+                        return null;
+                      }}
+                    />
+                    <div className="mt-4 flex justify-between items-center">
+                      <p>
+                        {selectedDates[0] && selectedDates[1]
+                          ? `${Math.ceil(
+                              (new Date(selectedDates[1]).getTime() -
+                                new Date(selectedDates[0]).getTime()) /
+                                (1000 * 60 * 60 * 24)
+                            )} night(s) x $${
+                              venue.price
+                            } total: $${calculateTotalPrice()}`
+                          : "No dates selected."}
+                      </p>
+                      <div className="flex space-x-4">
+                        <button
+                          onClick={() => setSelectedDates([null, null])}
+                          className="bg-gray-300 text-gray-800 py-1 px-4 text-sm rounded"
+                        >
+                          Clear
+                        </button>
+                        <button
+                          onClick={closeCalendar}
+                          className="bg-main-red text-background text-sm py-1 px-4 rounded hover:bg-red-700"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium">
+                    Number of Guests
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={venue?.maxGuests || 1}
+                    value={guestCount}
+                    onChange={(e) => setGuestCount(e.target.value)}
+                    className="border border-gray-300 rounded px-3 py-2"
+                  />
+                </div>
+
+                <button
+                  onClick={handleBooking}
+                  className="mt-4 px-3 bg-main-red text-background py-2 rounded font-semibold hover:bg-red-800 transition"
+                >
+                  Book Venue
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
