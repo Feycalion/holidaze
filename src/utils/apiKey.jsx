@@ -81,3 +81,26 @@ export const apiPut = async (endpoint, body) => {
 
   return response.json();
 };
+
+/**
+ * @param {string} endpoint
+ * @returns {Promise<any>}
+ */
+export const apiDelete = async (endpoint) => {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Noroff-API-Key": API_KEY,
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error(error);
+    throw new Error(`Failed to DELETE: ${response.status}`);
+  }
+
+  return response.json();
+};

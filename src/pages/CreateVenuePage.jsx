@@ -52,7 +52,7 @@ const CreateVenuePage = () => {
     } catch (error) {
       console.log("API Error Details:", error.message || error);
       console.log(payload);
-      console.error = ("Error creating venue:", error);
+      console.error("Error creating venue:", error);
       alert("Failed to create venue.");
     }
   };

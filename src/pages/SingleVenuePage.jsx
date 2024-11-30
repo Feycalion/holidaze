@@ -59,7 +59,7 @@ const SingleVenuePage = () => {
             {venue.location?.address || "No Address Provided"}
           </p>
 
-          <hr className="my-6 border-text-light" />
+          <hr className="my-6 border-gray-300" />
 
           <div className="flex items-center space-x-6 mt-4 text-text">
             <div className="flex items-center space-x-1">
@@ -75,7 +75,7 @@ const SingleVenuePage = () => {
             </p>
           </div>
 
-          <hr className="my-6 border-text-light" />
+          <hr className="my-6 border-gray-300" />
 
           <div className="mt-6">
             <h2 className="text-lg font-semibold text-text">
@@ -107,7 +107,7 @@ const SingleVenuePage = () => {
                 </li>
               )}
             </ul>
-            <hr className="my-6 border-text-light" />
+            <hr className="my-6 border-gray-300" />
             <button className="px-3 bg-main-red text-background py-2 rounded font-semibold hover:bg-red-800 transition">
               Book venue
             </button>
@@ -133,7 +133,7 @@ const SingleVenuePage = () => {
           </div>
         </div>
 
-        <hr className="my-6 border-text-light" />
+        <hr className="my-6 border-gray-300t" />
 
         <p className="text-text">
           {venue.description || "No description available."}

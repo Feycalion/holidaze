@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+import { apiPut, apiGet, apiDelete } from "../utils/apiKey";
+import { useParams, useNavigate } from "react-router-dom";
 
 const UpdateVenueSchema = Yup.object().shape({
   name: Yup.string().required("Venue name is required"),
@@ -18,18 +20,85 @@ const UpdateVenueSchema = Yup.object().shape({
 
 const UpdateVenuePage = () => {
   const [images, setImages] = useState([]);
+  const navigate = useNavigate();
+  const [venue, setVenue] = useState(null);
+  const { id } = useParams();
   const {
     register,
     handleSubmit,
     formState: { errors },
     resetField,
+    reset,
   } = useForm({
     resolver: yupResolver(UpdateVenueSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Venue data:", data);
-    console.log("Images:", images);
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this venue? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await apiDelete(`/holidaze/venues/${id}`);
+      alert("Venue deleted successfully.");
+      navigate("/profile");
+    } catch (error) {
+      console.error("Error deleting venue:", error);
+      alert("Failed to delete venue.");
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      const fetchVenue = async () => {
+        try {
+          const response = await apiGet(`/venues/${id}`);
+          setVenue(response.data);
+
+          reset({
+            name: response.data.name,
+            address: response.data.location.address,
+            description: response.data.description,
+            maxGuests: response.data.maxGuests,
+            price: response.data.price,
+          });
+          setImages(response.data.media.map((item) => item.url));
+        } catch (error) {
+          console.error("Error fetching venue:", error);
+          alert("Failed to load venue details.");
+        }
+      };
+
+      fetchVenue();
+    }
+  }, [id, reset]);
+
+  const onSubmit = async (data) => {
+    const payload = {
+      name: data.name,
+      description: data.description,
+      media: images.map((url) => ({ url, alt: "Venue Image" })),
+      price: data.price,
+      maxGuests: data.maxGuests,
+      meta: {
+        wifi: true,
+        parking: true,
+        breakfast: false,
+        pets: false,
+      },
+      location: {
+        address: data.address,
+      },
+    };
+    try {
+      await apiPut(`/holidaze/venues/${id}`, payload);
+      alert("Venue updated successfully.");
+
+      navigate(`/venues/${id}`);
+    } catch (error) {
+      console.log(payload);
+    }
   };
 
   const addImage = (url) => {
@@ -161,6 +230,14 @@ const UpdateVenuePage = () => {
           className="w-full bg-main-red text-background py-3 rounded font-semibold hover:bg-red-800 transition"
         >
           Update venue
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="bg-red-500 text-white py-2 px-4 rounded font-semibold hover:bg-red-700 transition"
+        >
+          Delete Venue
         </button>
       </form>
     </div>

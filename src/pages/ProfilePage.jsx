@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { AiOutlineEdit } from "react-icons/ai";
 import Card from "../components/Card";
 import { apiGet, apiPut } from "../utils/apiKey";
 
@@ -12,7 +12,7 @@ const ProfilePage = () => {
   const [bookings, setBookings] = useState([]);
   const [editing, setEditing] = useState(false);
   const [newBio, setNewBio] = useState("");
-  const [newAvatar, setNewAvatar] = useState(null);
+  const [newAvatar, setNewAvatar] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -24,11 +24,9 @@ const ProfilePage = () => {
         const profileData = await apiGet(
           `/profiles/${id}?_venues=true&_bookings=true`
         );
-        console.log("Fetched profile data:", profileData.data);
         setProfile(profileData.data);
         setNewBio(profileData.data.bio || "");
         setNewAvatar(profileData.data.avatar?.url || "");
-        // console.log(profileData.data);
 
         if (profileData.data.venueManager) {
           const venuesData = await apiGet(`/profiles/${id}/venues`);
@@ -58,14 +56,10 @@ const ProfilePage = () => {
         bio: newBio || profile.bio || "",
       };
 
-      console.log(payload);
-
       const response = await apiPut(
         `/holidaze/profiles/${profile.name}`,
-        payload,
-        true
+        payload
       );
-
       setProfile((prevProfile) => ({ ...prevProfile, ...response.data }));
       setEditing(false);
       alert("Profile updated successfully.");
@@ -148,15 +142,15 @@ const ProfilePage = () => {
         </button>
       )}
 
-      {profile.venueManager ? (
+      {profile.venueManager && (
         <>
           <h2 className="text-xl mb-4">{profile.name}'s Venues</h2>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
-              {venues.length > 0 ? (
-                venues.map((venue) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+            {venues.length > 0 ? (
+              venues.map((venue) => (
+                <div key={venue.id} className="relative">
                   <Card
-                    key={venue.id}
+                    id={venue.id}
                     media={
                       venue.media[0]?.url || "https://picsum.photos/200/300"
                     }
@@ -166,31 +160,21 @@ const ProfilePage = () => {
                     rating={venue.rating}
                     price={venue.price}
                   />
-                ))
-              ) : (
-                <p>This user has no venues.</p>
-              )}
-            </div>
+                  {isOwnProfile && (
+                    <button
+                      onClick={() => navigate(`/update/${venue.id}`)}
+                      className="absolute top-2 right-2 bg-main-red text-background p-2 rounded-full shadow-lg hover:bg-red-700 transition"
+                      title="Edit Venue"
+                    >
+                      <AiOutlineEdit size={20} />
+                    </button>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>This user has no venues.</p>
+            )}
           </div>
-        </>
-      ) : (
-        <>
-          <h2 className="text-xl mb-4">{profile.name}'s Bookings</h2>
-          {bookings.length > 0 ? (
-            <ul>
-              {bookings.map((booking) => (
-                <li key={booking.id}>
-                  <p>
-                    Booking at {booking.venue?.name || "Unknown Venue"} from{" "}
-                    {new Date(booking.dateFrom).toLocaleDateString()} to{" "}
-                    {new Date(booking.dateTo).toLocaleDateString()}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>This user has no bookings.</p>
-          )}
         </>
       )}
     </div>

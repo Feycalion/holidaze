@@ -1,8 +1,23 @@
 import React from "react";
 import { FaStar } from "react-icons/fa";
 
-const FilterOverlay = ({ isOpen, onClose }) => {
+const FilterOverlay = ({
+  isOpen,
+  onClose,
+  filters,
+  setFilters,
+  onFilterApply,
+}) => {
   if (!isOpen) return null;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRatingChange = (rating) => {
+    setFilters((prev) => ({ ...prev, rating }));
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -17,11 +32,21 @@ const FilterOverlay = ({ isOpen, onClose }) => {
           X
         </button>
 
-        <form className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onFilterApply();
+            onClose();
+          }}
+          className="space-y-4"
+        >
           <div>
             <label className="block text-sm font-medium">Location</label>
             <input
               type="text"
+              name="location"
+              value={filters.location}
+              onChange={handleInputChange}
               placeholder="Norway"
               className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
             />
@@ -31,7 +56,13 @@ const FilterOverlay = ({ isOpen, onClose }) => {
             <label className="block text-sm font-medium">Rating</label>
             <div className="flex space-x-1">
               {[...Array(5)].map((_, i) => (
-                <FaStar key={i} className="text-gray-400" />
+                <FaStar
+                  key={i}
+                  className={
+                    i < filters.rating ? "text-yellow-500" : "text-gray-400"
+                  }
+                  onClick={() => handleRatingChange(i + 1)}
+                />
               ))}
             </div>
           </div>
@@ -40,6 +71,9 @@ const FilterOverlay = ({ isOpen, onClose }) => {
             <label className="block text-sm font-medium">Guests</label>
             <input
               type="number"
+              name="guests"
+              value={filters.guests}
+              onChange={handleInputChange}
               placeholder="1"
               className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
             />
@@ -48,8 +82,11 @@ const FilterOverlay = ({ isOpen, onClose }) => {
           <div>
             <label className="block text-sm font-medium">Price</label>
             <input
-              type="text"
-              placeholder="$50"
+              type="number"
+              name="price"
+              value={filters.price}
+              onChange={handleInputChange}
+              placeholder="50"
               className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
             />
           </div>
@@ -58,7 +95,7 @@ const FilterOverlay = ({ isOpen, onClose }) => {
             type="submit"
             className="w-full bg-main-red text-background py-2 rounded font-medium hover:bg-red-800 transition"
           >
-            Filter
+            Apply Filters
           </button>
         </form>
       </div>

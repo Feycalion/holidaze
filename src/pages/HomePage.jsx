@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import Card from "../components/Card";
 import FilterButton from "../components/FilterBtn";
 import FilterOverlay from "../components/FilterOverlay";
-import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [venues, setVenues] = useState([]);
+  const [filteredVenues, setFilteredVenues] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    location: "",
+    rating: "",
+    guests: "",
+    price: "",
+  });
   const [status, setStatus] = useState("idle");
 
   const openFilter = () => setIsFilterOpen(true);
@@ -23,6 +29,7 @@ const HomePage = () => {
         const data = await response.json();
         console.log("Fetched venues:", data);
         setVenues(data.data);
+        setFilteredVenues(data.data);
         setStatus("success");
       } catch (error) {
         console.error(error);
@@ -32,6 +39,28 @@ const HomePage = () => {
 
     fetchVenues();
   }, []);
+
+  const applyFilters = () => {
+    const filtered = venues.filter((venue) => {
+      const matchesLocation = filters.location
+        ? venue.location?.city
+            ?.toLowerCase()
+            .includes(filters.location.toLowerCase())
+        : true;
+      const matchesRating = filters.rating
+        ? venue.rating >= filters.rating
+        : true;
+      const matchesGuests = filters.guests
+        ? venue.maxGuests >= parseInt(filters.guests)
+        : true;
+      const matchesPrice = filters.price
+        ? venue.price <= parseInt(filters.price)
+        : true;
+
+      return matchesLocation && matchesRating && matchesGuests && matchesPrice;
+    });
+    setFilteredVenues(filtered);
+  };
 
   return (
     <div className="p-6">
@@ -49,11 +78,17 @@ const HomePage = () => {
               <FilterButton onClick={openFilter} />
             </div>
 
-            <FilterOverlay isOpen={isFilterOpen} onClose={closeFilter} />
+            <FilterOverlay
+              isOpen={isFilterOpen}
+              onClose={closeFilter}
+              filters={filters}
+              setFilters={setFilters}
+              onFilterApply={applyFilters}
+            />
             <div className="mt-6 flex justify-center">
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
                 {console.log("Venues to render:", venues)}
-                {venues.map((venue) => (
+                {filteredVenues.map((venue) => (
                   <Card
                     key={venue.id}
                     id={venue.id}
