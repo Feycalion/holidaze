@@ -71,7 +71,12 @@ const ProfilePage = () => {
     }
   };
 
-  if (loading) return <p>Loading profile...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <div className="spinner"></div>
+      </div>
+    );
   if (error || !profile)
     return <p>Failed to load profile. Please try again later.</p>;
 
@@ -156,7 +161,7 @@ const ProfilePage = () => {
                 ).length;
 
                 return (
-                  <div key={venue.id} className="relative">
+                  <div key={venue.id} className="relative w-fit">
                     <Card
                       id={venue.id}
                       media={

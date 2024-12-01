@@ -38,12 +38,21 @@ const SingleVenuePage = () => {
     return nights * venue.price;
   };
 
+  const isDateDisabled = (date, disabledRanges) => {
+    return disabledRanges.some(({ dateFrom, dateTo }) => {
+      const fromDate = new Date(dateFrom);
+      const toDate = new Date(dateTo);
+      return date >= fromDate && date <= toDate;
+    });
+  };
+
   useEffect(() => {
     const fetchVenue = async () => {
       try {
         const response = await fetch(
           `https://v2.api.noroff.dev/holidaze/venues/${id}?_owner=true&_bookings=true`
         );
+
         if (!response.ok) {
           throw new Error("Failed to fetch venue details");
         }
@@ -93,7 +102,12 @@ const SingleVenuePage = () => {
     }
   };
 
-  if (loading) return <p>Loading venue...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <div className="spinner"></div>
+      </div>
+    );
   if (error || !venue)
     return <p>Failed to load venue. Please try again later.</p>;
 
@@ -191,6 +205,9 @@ const SingleVenuePage = () => {
                 {isCalendarOpen && (
                   <div className="mt-4 bg-white p-4 rounded shadow-lg">
                     <Calendar
+                      tileDisabled={({ date }) =>
+                        isDateDisabled(date, venue.bookings)
+                      }
                       selectRange
                       onChange={(dates) => {
                         setSelectedDates(dates);
@@ -205,9 +222,15 @@ const SingleVenuePage = () => {
                         ) {
                           return "highlighted-date";
                         }
+
+                        if (isDateDisabled(date, venue.bookings)) {
+                          return "disabled-date";
+                        }
+
                         return null;
                       }}
                     />
+
                     <div className="mt-4 flex justify-between items-center">
                       <p>
                         {selectedDates[0] && selectedDates[1]

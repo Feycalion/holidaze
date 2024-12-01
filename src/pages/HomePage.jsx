@@ -68,7 +68,11 @@ const HomePage = () => {
   return (
     <div className="p-6">
       <div className="mt-6">
-        {status === "loading" && <p>Loading venues...</p>}
+        {status === "loading" && (
+          <div className="flex items-center justify-center w-full h-screen">
+            <div className="spinner"></div>
+          </div>
+        )}
         {status === "error" && (
           <p>Failed to load venues. Please try again later.</p>
         )}

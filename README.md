@@ -1,8 +1,64 @@
-# React + Vite
+# Holidaze
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern front-end accommodation booking application for Holidaze, providing a user-friendly interface for customers to book holidays at various venues and for venue managers to manage venues and bookings. This project was built using **React**, **Tailwind CSS**, and the **Holidaze API**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Customer/Guest Features:
+
+- Browse and search for accommodations.
+- Filter venues by location, price, rating, and guest capacity.
+- View detailed venue pages with amenities and availability.
+- Book a venue and select dates and number of guests.
+
+### Venue Manager Features:
+
+- Register as a venue manager.
+- Create new venues.
+- Update and delete existing venues.
+- View bookings associated with their venues.
+
+### Additional Features:
+
+- Responsive design for a seamless experience on all devices.
+- User authentication for secure access to features.
+- Custom error handling and loading states.
+
+---
+
+## Technologies Used
+
+- **React**: React, Tailwind CSS
+- **Tailwind CSS**: Holidaze API
+
+---
+
+## Setup and Installation
+
+To set up and run the project locally, follow these steps:
+
+### Prerequisites
+
+1. Ensure you have **Node.js** and **npm** installed. You can download them from [Node.js Official Website](https://nodejs.org/).
+2. Clone this repository to your local machine:
+   ```bash
+   git clone https://github.com/Feycalion/holidaze
+   ```
+3. ```bash
+   cd holidaze
+   ```
+
+### Installation
+
+1. Install dependencies
+   ```bash
+   npm install
+   ```
+
+### Run the Project
+
+To start the project locally:
+
+1. ```bash
+   npm run dev
+   ```

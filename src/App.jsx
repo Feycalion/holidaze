@@ -8,10 +8,12 @@ import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateVenuePage from "./pages/CreateVenuePage";
 import UpdateVenuePage from "./pages/UpdateVenuePage";
+import AutoScroll from "./components/AutoScroll";
 
 function App() {
   return (
     <Router>
+      <AutoScroll />
       <MainLayout>
         <Routes>
           <Route path="/" element={<HomePage />} />
