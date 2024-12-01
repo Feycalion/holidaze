@@ -1,13 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { useOutsideClick } from "../hooks/useOutsideClick";
+import { apiGet } from "../utils/apiKey";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isVenueManager, setIsVenueManager] = useState(false);
 
   const isLoggedIn = !!localStorage.getItem("token");
-  const userName = localStorage.getItem("user");
+  const loggedInUserName = localStorage.getItem("user");
+  const ref = useOutsideClick(() => {
+    setMenuOpen(false);
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (isLoggedIn && loggedInUserName) {
+        try {
+          const response = await apiGet(`/profiles/${loggedInUserName}`);
+          setIsVenueManager(response.data.venueManager || false);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [isLoggedIn, loggedInUserName]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -21,7 +42,7 @@ const Navbar = () => {
         Holidaze
       </Link>
 
-      <div className="flex items-center px-4">
+      <div ref={ref} className="flex items-center px-4">
         {isLoggedIn ? (
           <div className="relative">
             <button
@@ -34,19 +55,21 @@ const Navbar = () => {
             {menuOpen && (
               <div className="absolute right-0 mt-2 bg-background rounded shadow-lg w-48">
                 <Link
-                  to={`/profiles/${userName}`}
+                  to={`/profiles/${loggedInUserName}`}
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
                   onClick={() => setMenuOpen(false)}
                 >
                   Profile
                 </Link>
-                <Link
-                  to="/create"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Create Venue
-                </Link>
+                {isVenueManager && (
+                  <Link
+                    to="/create"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Create Venue
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"

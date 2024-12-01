@@ -39,14 +39,10 @@ const UpdateVenuePage = () => {
     );
     if (!confirmDelete) return;
 
-    try {
-      await apiDelete(`/holidaze/venues/${id}`);
-      alert("Venue deleted successfully.");
-      navigate("/profile");
-    } catch (error) {
-      console.error("Error deleting venue:", error);
-      alert("Failed to delete venue.");
-    }
+    await apiDelete(`/holidaze/venues/${id}`);
+
+    alert("Venue deleted successfully.");
+    navigate("/profile");
   };
 
   useEffect(() => {

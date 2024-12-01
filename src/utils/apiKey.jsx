@@ -101,6 +101,4 @@ export const apiDelete = async (endpoint) => {
     console.error(error);
     throw new Error(`Failed to DELETE: ${response.status}`);
   }
-
-  return response.json();
 };

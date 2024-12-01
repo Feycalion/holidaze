@@ -27,7 +27,6 @@ const SignUpPage = () => {
   const [isVenueManager, setIsVenueManger] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  //const venueManager = location.state?.venueManager || false;
   const {
     register,
     handleSubmit,
