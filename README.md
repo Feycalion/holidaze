@@ -1,6 +1,7 @@
 # Holidaze
 
-![holidazepic](https://github.com/user-attachments/assets/4a4e5543-d191-416f-8502-1fab77af11fe)
+![holidazepic](https://github.com/user-attachments/assets/a9456396-8714-43a6-998a-7ab69c2a1a06)
+
 
 A modern front-end accommodation booking application for Holidaze, providing a user-friendly interface for customers to book holidays at various venues and for venue managers to manage venues and bookings. This project was built using **React**, **Tailwind CSS**, and the **Holidaze API**.
 
