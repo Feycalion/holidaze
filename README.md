@@ -28,8 +28,8 @@ A modern front-end accommodation booking application for Holidaze, providing a u
 
 ## Technologies Used
 
-- **React**: React, Tailwind CSS
-- **Tailwind CSS**: Holidaze API
+- **React**
+- **Tailwind CSS**
 
 ---
 
