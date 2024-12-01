@@ -1,5 +1,6 @@
 import React from "react";
 import { FaStar } from "react-icons/fa";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const FilterOverlay = ({
   isOpen,
@@ -8,6 +9,10 @@ const FilterOverlay = ({
   setFilters,
   onFilterApply,
 }) => {
+  const ref = useOutsideClick(() => {
+    onClose(false);
+  });
+
   if (!isOpen) return null;
 
   const handleInputChange = (e) => {
@@ -21,7 +26,10 @@ const FilterOverlay = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-background p-6 rounded-lg w-80 shadow-lg relative">
+      <div
+        ref={ref}
+        className="bg-background p-6 rounded-lg w-80 shadow-lg relative"
+      >
         <h2 className="text-center text-xl font-semibold mb-4">
           Filter venues
         </h2>
@@ -33,6 +41,7 @@ const FilterOverlay = ({
         </button>
 
         <form
+          ref={ref}
           onSubmit={(e) => {
             e.preventDefault();
             onFilterApply();
@@ -80,13 +89,13 @@ const FilterOverlay = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium">Price</label>
+            <label className="block text-sm font-medium">Price range</label>
             <input
               type="number"
               name="price"
               value={filters.price}
               onChange={handleInputChange}
-              placeholder="50"
+              placeholder="$0"
               className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700"
             />
           </div>

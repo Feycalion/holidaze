@@ -3,7 +3,6 @@ import "./index.css";
 import MainLayout from "./layout/MainLayout";
 import HomePage from "./pages/HomePage";
 import SingleVenuePage from "./pages/SingleVenuePage";
-import SignUpChoicePage from "./pages/SignUpChoicePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -17,7 +16,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/venue/:id" element={<SingleVenuePage />} />
-          <Route path="/signupchoice" element={<SignUpChoicePage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profiles/:id" element={<ProfilePage />} />

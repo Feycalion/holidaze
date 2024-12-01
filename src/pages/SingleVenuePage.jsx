@@ -48,7 +48,7 @@ const SingleVenuePage = () => {
           throw new Error("Failed to fetch venue details");
         }
         const venueData = await response.json();
-        console.log("Fetched venue data:", venueData);
+
         setVenue(venueData.data);
       } catch (error) {
         console.error("Error fetching venue:", error);
@@ -98,7 +98,7 @@ const SingleVenuePage = () => {
     return <p>Failed to load venue. Please try again later.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto mt-6 p-6 grid grid-cols-1 lg:grid-cols-3 gap-14">
+    <div className="max-w-5xl mx-auto pt-12 p-6 grid grid-cols-1 lg:grid-cols-3 gap-14">
       <div className="lg:col-span-2">
         <img
           src={venue.media?.[0]?.url || "https://picsum.photos/200/300"}
@@ -162,6 +162,14 @@ const SingleVenuePage = () => {
                 </li>
               )}
             </ul>
+            {!venue.meta?.wifi &&
+              !venue.meta?.parking &&
+              !venue.meta?.pets &&
+              !venue.meta?.breakfast && (
+                <p className="mt-2 text-text-light">
+                  This place offers no extra amenities.
+                </p>
+              )}
 
             <hr className="my-6 border-gray-300" />
 
@@ -185,7 +193,6 @@ const SingleVenuePage = () => {
                     <Calendar
                       selectRange
                       onChange={(dates) => {
-                        console.log("Selected Dates:", dates);
                         setSelectedDates(dates);
                       }}
                       value={selectedDates}

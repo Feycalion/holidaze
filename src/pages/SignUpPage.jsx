@@ -44,8 +44,6 @@ const SignUpPage = () => {
         venueManager: isVenueManager,
       };
 
-      console.log("Sign-up Payload:", payload);
-
       const response = await apiPost("/auth/register", payload);
       console.log("User registered successfully:", response);
       navigate(`/login`, { replace: true });
@@ -57,7 +55,7 @@ const SignUpPage = () => {
 
   if (isSelectPage) {
     return (
-      <div className="flex flex-col items-center min-h-screen mt-36">
+      <div className="flex flex-col items-center min-h-screen pt-36">
         <h1 className="text-3xl text-text mb-8">Sign up</h1>
 
         <p className="text-lg mb-4 text-text">Sign up as</p>
@@ -97,7 +95,7 @@ const SignUpPage = () => {
     );
   } else {
     return (
-      <div className="flex flex-col items-center min-h-screen bg-white p-6 mt-36">
+      <div className="flex flex-col items-center min-h-screen p-6 pt-36">
         <h1 className="text-3xl text-text mb-8">Sign up</h1>
 
         <form

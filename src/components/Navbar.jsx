@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 import { apiGet } from "../utils/apiKey";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isVenueManager, setIsVenueManager] = useState(false);
 
@@ -36,9 +37,20 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const handleLogoClick = (e) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.location.reload();
+    }
+  };
+
   return (
     <header className="bg-main-red p-6 flex justify-between items-center font-Poppins">
-      <Link to="/" className="text-2xl px-4 font-semibold text-background">
+      <Link
+        to="/"
+        className="text-2xl px-4 font-semibold text-background"
+        onClick={handleLogoClick}
+      >
         Holidaze
       </Link>
 
@@ -89,7 +101,7 @@ const Navbar = () => {
             </Link>
 
             <Link
-              to="/signupchoice"
+              to="/signup"
               className="bg-background py-[6px] px-2 text-main-red font-medium rounded-lg hover:bg-main-red hover:text-background transition-colors duration-200"
             >
               Sign up

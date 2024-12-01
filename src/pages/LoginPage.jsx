@@ -52,7 +52,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-white p-6 mt-36">
+    <div className="flex flex-col items-center min-h-screen p-6 pt-36">
       <h1 className="text-3xl text-text mb-8">Log in</h1>
 
       <form

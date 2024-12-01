@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { apiPost } from "../utils/apiKey";
+import { useNavigate } from "react-router-dom";
 
 const CreateVenueSchema = Yup.object().shape({
   name: Yup.string().required("Venue name is required"),
@@ -19,6 +20,7 @@ const CreateVenueSchema = Yup.object().shape({
 
 const CreateVenuePage = () => {
   const [images, setImages] = useState([]);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -47,11 +49,12 @@ const CreateVenuePage = () => {
     };
     try {
       const response = await apiPost("/holidaze/venues", payload);
-      console.log("Venue created successfully:", response);
+
+      const createdVenueId = response.data.id;
+      navigate(`/venue/${createdVenueId}`);
       alert("Venue created successfully.");
     } catch (error) {
       console.log("API Error Details:", error.message || error);
-      console.log(payload);
       console.error("Error creating venue:", error);
       alert("Failed to create venue.");
     }
@@ -76,7 +79,7 @@ const CreateVenuePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen p-6 mt-36">
+    <div className="flex flex-col items-center min-h-screen p-6 pt-36">
       <h1 className="text-3xl text-text mb-8">Create new venue</h1>
 
       <form
@@ -140,7 +143,7 @@ const CreateVenuePage = () => {
             <input
               type="number"
               {...register("price")}
-              placeholder="$50"
+              placeholder="$0"
               className="w-full border border-gray-300 rounded px-3 py-2"
             />
             <p className="text-main-red text-sm">{errors.price?.message}</p>
@@ -180,7 +183,7 @@ const CreateVenuePage = () => {
               <button
                 type="button"
                 onClick={() => removeImage(url)}
-                className="absolute top-1 right-1 bg-white text-red-500 rounded-full w-5 h-5 flex items-center justify-center"
+                className="absolute top-1 right-1 bg-background text-red-500 rounded-full w-5 h-5 flex items-center justify-center"
               >
                 &times;
               </button>

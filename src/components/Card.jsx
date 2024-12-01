@@ -12,7 +12,6 @@ const Card = ({
   price,
   bookingsCount,
 }) => {
-  console.log(media);
   return (
     <NavLink
       to={`/venue/${id}`}

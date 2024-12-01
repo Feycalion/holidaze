@@ -91,7 +91,7 @@ const UpdateVenuePage = () => {
       await apiPut(`/holidaze/venues/${id}`, payload);
       alert("Venue updated successfully.");
 
-      navigate(`/venues/${id}`);
+      navigate(`/venue/${id}`);
     } catch (error) {
       console.log(payload);
     }
@@ -109,7 +109,7 @@ const UpdateVenuePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen p-6 mt-36">
+    <div className="flex flex-col items-center min-h-screen p-6 pt-36">
       <h1 className="text-3xl text-text mb-8">Update venue</h1>
 
       <form
@@ -173,7 +173,7 @@ const UpdateVenuePage = () => {
             <input
               type="number"
               {...register("price")}
-              placeholder="$50"
+              placeholder="$0"
               className="w-full border border-gray-300 rounded px-3 py-2"
             />
             <p className="text-main-red text-sm">{errors.price?.message}</p>
@@ -231,7 +231,7 @@ const UpdateVenuePage = () => {
         <button
           type="button"
           onClick={handleDelete}
-          className="bg-red-500 text-white py-2 px-4 rounded font-semibold hover:bg-red-700 transition"
+          className="bg-red-500 text-background py-2 px-4 rounded font-semibold hover:bg-red-700 transition"
         >
           Delete Venue
         </button>

@@ -23,13 +23,16 @@ const HomePage = () => {
       setStatus("loading");
       try {
         const response = await fetch(
-          "https://v2.api.noroff.dev/holidaze/venues"
+          "https://v2.api.noroff.dev/holidaze/venues?sort=created"
         );
         if (!response.ok) throw new Error("Failed to fetch venues");
         const data = await response.json();
-        console.log("Fetched venues:", data);
-        setVenues(data.data);
-        setFilteredVenues(data.data);
+        const sortedVenues = data.data.sort(
+          (a, b) => new Date(b.created) - new Date(a.created)
+        );
+
+        setVenues(sortedVenues);
+        setFilteredVenues(sortedVenues);
         setStatus("success");
       } catch (error) {
         console.error(error);
@@ -87,7 +90,6 @@ const HomePage = () => {
             />
             <div className="mt-6 flex justify-center">
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4 gap-6">
-                {console.log("Venues to render:", venues)}
                 {filteredVenues.map((venue) => (
                   <Card
                     key={venue.id}

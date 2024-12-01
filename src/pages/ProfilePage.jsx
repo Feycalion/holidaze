@@ -78,7 +78,7 @@ const ProfilePage = () => {
   const isOwnProfile = profile.name === loggedInUserName;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 pt-12">
       <div className="flex items-start mb-10 space-x-8">
         <img
           src={profile.avatar?.url || "https://picsum.photos/200/300"}
